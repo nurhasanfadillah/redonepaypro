@@ -1,7 +1,9 @@
 {
+  "id": "redonepaypro-app-v1",
   "name": "RedonePaypro - Sistem Manajemen Produksi",
   "short_name": "RedonePaypro",
-  "start_url": "./",
+  "start_url": "/index.html",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#0f172a",
   "theme_color": "#22c55e",
