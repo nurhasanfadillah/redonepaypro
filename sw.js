@@ -1,4 +1,4 @@
-const CACHE_NAME = 'redonepaypro-v1';
+const CACHE_NAME = 'redonepaypro-v2';
 const urlsToCache = [
   './',
   './index.html',
@@ -8,12 +8,24 @@ const urlsToCache = [
 ];
 
 self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then((cache) => {
-        return cache.addAll(urlsToCache);
-      })
-  );
+  event.waitUntil((async () => {
+    const cache = await caches.open(CACHE_NAME);
+    await cache.addAll(urlsToCache);
+    try {
+      const htmlResp = await fetch('./index.html', { cache: 'no-cache' });
+      const html = await htmlResp.text();
+      const jsMatch = html.match(/<script[^>]+src="(.+assets\/index-[^"]+\.js)"/);
+      if (jsMatch && jsMatch[1]) {
+        await cache.add(jsMatch[1]);
+      }
+      const cssMatch = html.match(/<link[^>]+href="(.+index\.css)"/);
+      if (cssMatch && cssMatch[1]) {
+        await cache.add(cssMatch[1]);
+      }
+    } catch (e) {
+      // swallow
+    }
+  })());
   self.skipWaiting();
 });
 
